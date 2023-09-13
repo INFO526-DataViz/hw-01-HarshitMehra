@@ -1,6 +1,6 @@
 ---
 title: "HW 01"
-author: "INSERT YOUR NAME HERE"
+author: "Harshit Mehra"
 format: html
 toc: true
 ---
@@ -9,18 +9,415 @@ toc: true
 
 ```{r label-me-1}
 
+### Libraries i have used:-
+library(dsbox)
+library(ggplot2)
+library(dplyr)   
+library(openintro)
+library(gridExtra) 
+library(ggrepel)
+library(gridExtra)
+library(pacman)
+
+## 1 - Road traffic accidents in Edinburgh
+
+
+
+# Loading data from the dsbox package in R,
+# First we need to install and load the package.
+devtools::install_github("rstudio-education/dsbox", force = TRUE)
+
+
+
+accidents <- accidents |>
+  mutate(r_days = ifelse(day_of_week %in% c("Saturday", "Sunday"), "Weekend", "Weekday"))
+
+ggplot(accidents,
+       aes(x = time,
+           fill = severity)) +
+  geom_density(alpha = 0.4) +
+  facet_wrap(~r_days, dir = 'v') +
+  scale_fill_manual(values = c("mediumpurple4" , "cadetblue" , "khaki2"))+
+  labs(x = "Time of day",
+       y = "Density",
+       color = NULL,
+       title = "Number of accidents throughout the day",
+       subtitle = "By day of week and severity",
+       fill = "Severity") +
+  theme(plot.title = element_text(size = 18, color = "navy"),
+        plot.subtitle = element_text(size = 13))
+
+
+
+
 ```
 
 ## 2 - NYC marathon winners
 
 ```{r label-me-2}
 
+## Question 2(a)
+
+# histogram :-
+
+ggplot(nyc_marathon,
+       aes(x = time)) +
+  geom_histogram(binwidth = 350, fill = 'lavender', color = 'darkgreen')
+
+
+
+# boxplot :-
+
+ggplot(nyc_marathon,
+       aes(y = time)) +
+  geom_boxplot() 
+
+
+## Question 2(b)
+
+# Plotting box plot side-by-side:- 
+
+ggplot(nyc_marathon, 
+       aes(x = division,
+           y = time,
+           fill = division)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("skyblue", "pink"))
+
+# Question 2(c)
+
+ggplot(nyc_marathon, 
+       aes(x = division,
+           y = time,
+           fill = division)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("skyblue", "pink")) +
+  labs(x = NULL) +
+  theme(legend.position = "none")
+
+# Question 2(d)
+
+# Plotting time series:-
+
+ggplot(nyc_marathon,
+       aes(x = year,
+           y = time,
+           group = division,
+           color = division)) +
+  geom_line() +
+  scale_color_manual(values = c("skyblue", "pink"))
+
+
+
+
 ```
 
 ## 3 - US counties
+```{r label-me-3}
+
+
+# Plot A:-
+
+ggplot(county, aes(x = homeownership,
+                   y = poverty)) +
+  geom_point()
+
+# Plot B:-
+
+ggplot(county, aes(x = homeownership,
+                   y = poverty)) +
+  geom_point() +
+  geom_smooth(se = FALSE)
+
+# Plot C:-
+
+ggplot(county, aes(x = homeownership,
+                   y = poverty,
+                   group = metro)) +
+  geom_point() +
+  geom_smooth(se = FALSE, color = 'green')
+
+
+# Plot D:-
+
+ggplot(county,
+       aes(x = homeownership,
+           y = poverty,
+           group = metro)) +
+  geom_smooth(se = FALSE) +
+  geom_point()
+
+
+# Plot E:-
+
+ggplot(county,
+       aes(x = homeownership,
+           y = poverty,
+           group = metro,
+           color = metro)) +
+  geom_point() +
+  geom_smooth(aes(linetype = metro),
+              se = FALSE,
+              color = 'blue') +
+  guides(color = guide_legend(order = 2),
+         linetype = guide_legend(order = 1))
+
+
+# Plot F:-
+
+ggplot(county,
+       aes(x = homeownership,
+           y = poverty,
+           group = metro,
+           color = metro)) +
+  geom_point() +
+  geom_smooth(se = FALSE)
+
+
+#Plot G:-
+
+ggplot(county,
+       aes(x = homeownership,
+           y = poverty,
+           color = metro)) +
+  geom_point() +
+  geom_smooth(aes(group = "all"),
+              se = FALSE)
+
+
+# Plot H :-
+
+ggplot(county,
+       aes(x = homeownership,
+           y = poverty,
+           color = metro)) +
+  geom_point()
+
+
+
+
+```
 
 
 ## 4 - Rental apartments in SF
+```{r label-me-4}
+
+
+install.packages("pacman")
+pacman::p_load(tidyverse,
+               scales)
+
+library(dplyr)
+
+# Set theme for ggplot2:-
+
+ggplot2::theme_set(ggplot2::theme_minimal(base_size = 14))
+
+# Rent <- read_csv("https://github.com/rfordatascience/tidytuesday/blob/master/data/2022/2022-07-05/rent.csv")
+
+# Reading rent file:-
+
+rent <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-07-05/rent.csv')
+
+# Filtering the data of SanFrancisco and availalbe rooms:-
+
+sf_rent <- rent|>
+  filter(city == "san francisco" & room_in_apt == 0)
+
+# Summary table which counts rentals per neighborhood
+
+n_count <- sf_rent |>
+  group_by(nhood) |>
+  summarise(count = n())
+print(n_count)
+
+
+# Grouping the combination:-
+
+sf_rent1 <- sf_rent |>
+  mutate(
+    nb_groups = ifelse(nhood %in% c("CCSF",
+                                    "NOPA",
+                                    "SOMA / south beach"),
+                       "Others",
+                       nhood)
+  )
+# Filtering the data:-
+
+final_rent <- sf_rent1 |>
+  filter(nb_groups %in% c("Others",
+                          "sea cliff",
+                          "nob hill",
+                          "downtown",
+                          "mission district",
+                          "outer sunset",
+                          "parkside",
+                          "cole valley"))
+
+# Selecting years:-
+yr <- c(2003, 
+        2006,
+        2009,
+        2012,
+        2015,
+        2018)
+
+final_rent1 <- final_rent |>
+  filter(year %in% yr)
+
+
+# Creating Labels:-
+
+new_labels <- as_labeller(c(
+  "mission district" = "Mission District",
+  "downtown" = "Downtown",
+  "nob hill" = "Nob Hill",
+  "Others" = "Others",
+  "outer sunset" = "Outer Sunset",
+  "sea cliff" = "Sea Cliff",
+  "cole valley" = "Cole Valley",
+  "parkside" = "Parkside"
+))
+
+
+# Plotting graph:-
+
+ggplot(final_rent1, 
+       aes(x = nb_groups,
+           y = price/beds,
+           fill = as.factor(year))) +
+  geom_boxplot(width = 0.7) +
+  facet_wrap(~nb_groups,
+             scales = "free",
+             labeller = new_labels,
+             ncol = 4) +
+  labs(x = "Neighbourhood in San Francisco",
+       y = "Rental Price per Bedroom",
+       title = "Rental Apartments in SF",
+       fill = "Year") +
+  scale_x_discrete(labels = NULL) +
+  scale_y_continuous(labels = label_dollar())
+
+
+
+
+```
 
 
 ## 5 - Napoleon’s march.
+```{r label-me-5}
+
+
+
+
+#Reading the napolean.rds file and all the data in the dataframe
+napolean = readRDS("data/napoleon.rds")
+napolean
+napolean$cities
+napolean$temperatures
+napolean$troops
+
+# Plotting the troops data.
+# The troops data contains 5 variables about troop movement:
+# Longitude(long), Latitude(lat), Survivors, direction and group. 
+# The longitude variable will be mapped to x-axis and 
+# the latitude variable will be mapped to y-axis.
+
+# The mapping of color to the direction will distinguish the path between 
+# advancing troops and retreating groups.
+# We have set the minimum size for mapping the data value to 2
+# and maximum size is 13.
+
+troops = ggplot(napolean$troops,
+                aes(x = long,
+                    y = lat)) +
+  geom_path(aes(size = survivors,
+                color = direction,
+                group = group),
+            lineend="round") +
+  scale_size(range = c(2,13)) +
+  scale_color_manual(values = c("lavender",
+                                "darkgray"))
+
+# Now, to overlay the geographic details, like position of the cites,
+# geom_point() is used to plot the city location.
+
+
+# The font-type is used for rendering text elements within the plot.
+
+cities = troops +
+  geom_point(data = napolean$cities,
+             aes(x = long,
+                 y = lat),
+             color = "purple") +
+  geom_text_repel(data = napolean$cities,
+                  aes(x = long,
+                      y = lat,
+                      label = city),
+                  color = "darkred",
+                  family = "Open Sans Condensed",
+                  fontface = "bold")
+
+
+napolean$temperatures = napolean$temperatures|>
+  mutate(label = paste0(temp,
+                        "°",
+                        "/",
+                        day, 
+                        month))
+
+head(napolean$temperatures)
+
+# To plot temperature graph longitude variable is used in x-axis
+# and temperature is used in y-axis.
+
+# The route is a representation of the temperature data points over the regions
+# is where the troops have traveled.
+
+
+temp = ggplot(napolean$temperatures,
+              aes(x = long,
+                  y = temp)) +
+  geom_path(color = "pink",
+            size = 2) +
+  geom_point(size = 2) +
+  geom_text_repel(aes(label=label), size=3)
+
+# "coord_cartesian()" is used to set the limits for x-axis 
+#  without filtering the data points.
+#  This function also allows to zoom in one specific region of the x-axis.
+
+# "theme_void()" is used to remove the background, grid lines and axis labels.
+
+cities = cities +
+  coord_cartesian(xlim = c(24, 38)) +
+  theme_void() +
+  labs(x = NULL,
+       y = NULL) + 
+  theme(legend.position = "none")
+
+# Similar to the previous code, the limit for x-axis is again set 
+# which is ranging from 24 to 38. 
+# This helps to focus on the specific region in the x-axis while 
+# retaining all the data points.
+
+temp = temp +
+  coord_cartesian(xlim = c(24, 38)) +
+  labs(x = NULL, y="Temperature") + 
+  theme_bw() +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        axis.text.x = element_blank(), axis.ticks = element_blank(),
+        panel.border = element_blank())
+
+# Finally, with grid.arrange() function the cities and temp plots 
+# are arranged into a grid and row will set the row values to 2 in the grid.
+
+grid.arrange(cities,
+             temp,
+             nrow=2, 
+             heights=c(3.5, 1.2))
+
+
+```
