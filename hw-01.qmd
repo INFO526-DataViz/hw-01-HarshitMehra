@@ -1,9 +1,9 @@
 ---
 title: "HW 01"
 author: "Harshit Mehra"
-format: 
+format:
   html:
-  embed-resources: true
+    embed-resources: true
 toc: true
 ---
   
