@@ -1,22 +1,22 @@
 ---
-title: "HW 01"
+  title: "HW 01"
 author: "Harshit Mehra"
 format: 
   html:
-    embed-resources: true
+  embed-resources: true
 toc: true
 ---
-
-## 1 - Road traffic accidents in Edinburgh
-
-```{r label-me-1}
+  
+  ## 1 - Road traffic accidents in Edinburgh
+  
+  ```{r label-me-1}
 
 ### Libraries i have used:-
 library(dsbox)
 library(ggplot2)
 library(dplyr)   
 library(openintro)
-library(gridExtra) 
+library(gridExtra)
 library(ggrepel)
 library(gridExtra)
 library(pacman)
@@ -31,14 +31,23 @@ devtools::install_github("rstudio-education/dsbox", force = TRUE)
 
 
 
-accidents <- accidents |>
+accidents = accidents |>
   mutate(r_days = ifelse(day_of_week %in% c("Saturday", "Sunday"), "Weekend", "Weekday"))
 
+# This line uses the pipe operator"|>"  to take the "accidents" Dataset and add a new column "r_days."
+# and "ifelse" function is used to assign values conditionally to the "r_days" column
+# based on the values in the "day_of_week" column.
+# If "day_of_week" is "Saturday" or "Sunday," it assign "Weekend"; otherwise, it assign "Weekday."
+
+
+# Initializing a plot using the "accidents" dataset
+# which specifies that the x-axis should represent the "time" variable, 
+# and the fill color should be based on the "severity" variable.
 ggplot(accidents,
        aes(x = time,
            fill = severity)) +
-  geom_density(alpha = 0.4) +
-  facet_wrap(~r_days, dir = 'v') +
+  geom_density(alpha = 0.4) +                    # alpha for transparency 
+  facet_wrap(~r_days, dir = 'v') +     # creating subplots for different levels of "r_days" variable(Vertically)
   scale_fill_manual(values = c("mediumpurple4" , "cadetblue" , "khaki2"))+
   labs(x = "Time of day",
        y = "Density",
@@ -46,10 +55,9 @@ ggplot(accidents,
        title = "Number of accidents throughout the day",
        subtitle = "By day of week and severity",
        fill = "Severity") +
+  # This part changes the appearance of the plot
   theme(plot.title = element_text(size = 18, color = "navy"),
         plot.subtitle = element_text(size = 13))
-
-
 
 
 ```
@@ -62,16 +70,19 @@ ggplot(accidents,
 
 # histogram :-
 
-ggplot(nyc_marathon,
-       aes(x = time)) +
-  geom_histogram(binwidth = 350, fill = 'lavender', color = 'darkgreen')
 
+ggplot(nyc_marathon,            # This line creates a plot using the "nyc_marathon" dataset
+       aes(x = time)) +         # where the x-axis is representing the "time" variable from dataset.
+   # To Create a Histogram of color fill "Lavender" and "Navy" borders
+  geom_histogram(binwidth = 350, fill = 'lavender', color = 'navy') 
 
 
 # boxplot :-
 
-ggplot(nyc_marathon,
-       aes(y = time)) +
+
+ggplot(nyc_marathon,        # This line creates a plot using the "nyc_marathon" dataset
+       aes(y = time)) +     # where the x-axis is representing the "time" variable from dataset.
+  # To Create a simple Boxplot
   geom_boxplot() 
 
 
@@ -79,11 +90,11 @@ ggplot(nyc_marathon,
 
 # Plotting box plot side-by-side:- 
 
-ggplot(nyc_marathon, 
-       aes(x = division,
-           y = time,
+ggplot(nyc_marathon,          # This line creates a plot using the "nyc_marathon" dataset
+       aes(x = division,      # X-axis representing "division" variable from dataset
+           y = time,          # Y-axis representing "time" variable from dataset
            fill = division)) +
-  geom_boxplot() +
+  geom_boxplot() +            # To create a Boxplot.
   scale_fill_manual(values = c("skyblue", "pink"))
 
 # Question 2(c)
@@ -95,7 +106,7 @@ ggplot(nyc_marathon,
   geom_boxplot() +
   scale_fill_manual(values = c("skyblue", "pink")) +
   labs(x = NULL) +
-  theme(legend.position = "none")
+  theme(legend.position = "none")      # Removed Legends using this.
 
 # Question 2(d)
 
@@ -106,10 +117,8 @@ ggplot(nyc_marathon,
            y = time,
            group = division,
            color = division)) +
-  geom_line() +
+  geom_line() +               # To create a Line Plot.
   scale_color_manual(values = c("skyblue", "pink"))
-
-
 
 
 ```
@@ -118,83 +127,65 @@ ggplot(nyc_marathon,
 ```{r label-me-3}
 
 
-# Plot A:-
+# Defining each individual ggplot plot :
 
-ggplot(county, aes(x = homeownership,
-                   y = poverty)) +
+
+# Plot A :
+
+plot_A = ggplot(county, aes(x = homeownership, y = poverty)) + geom_point() # For Scatter Plot.
+# Creating a plot using "county" dataset.
+
+
+# Plot B :
+
+plot_B = ggplot(county, aes(x = homeownership, y = poverty)) +
+  geom_point() +              # First layer of Scatter Plot.
+  geom_smooth(se = FALSE)     # Second layer of  Line Plot.
+            # SE + FAlSE to remove shaded region around the line.
+
+# Plot C :
+
+plot_C = ggplot(county, aes(x = homeownership, y = poverty, group = metro)) +  # "metro "To group the data for smooth line.
+  geom_point() +
+  geom_smooth(se = FALSE, color = 'green') # Change Line color as Green.
+
+# Plot D :
+
+plot_D = ggplot(county, aes(x = homeownership, y = poverty, group = metro)) +
+  geom_smooth(se = FALSE) +   # First layer of Line Plot.
+  geom_point()                # Second layer of Scatter Plot.
+
+
+# Plot E :
+
+              # To determine the color of data points in the scatter plot.
+plot_E = ggplot(county, aes(x = homeownership, y = poverty, group = metro, color = metro)) +
+  geom_point() +      # Scatter Plot then Smooth Line 
+  geom_smooth(aes(linetype = metro), se = FALSE, color = 'blue') +  # Remove Shaded area
+  guides(color = guide_legend(order = 2), linetype = guide_legend(order = 1))
+# setting order of legends for color aesthetic to 2 and linetype aesthetic to 1. 
+
+# Plot F :
+
+plot_F = ggplot(county, aes(x = homeownership, y = poverty, group = metro, color = metro)) +
+  geom_point() +      # Scatter Plot then Smooth Line 
+  geom_smooth(se = FALSE)  # Remove Shaded area
+
+# Plot G :
+
+plot_G = ggplot(county, aes(x = homeownership, y = poverty, color = metro)) +
+  geom_point() +
+  geom_smooth(aes(group = "all"), se = FALSE) 
+ # "all" data points will be treated as they belong to a single group
+
+# Plot H :
+
+plot_H = ggplot(county, aes(x = homeownership, y = poverty, color = metro)) +
   geom_point()
 
-# Plot B:-
 
-ggplot(county, aes(x = homeownership,
-                   y = poverty)) +
-  geom_point() +
-  geom_smooth(se = FALSE)
-
-# Plot C:-
-
-ggplot(county, aes(x = homeownership,
-                   y = poverty,
-                   group = metro)) +
-  geom_point() +
-  geom_smooth(se = FALSE, color = 'green')
-
-
-# Plot D:-
-
-ggplot(county,
-       aes(x = homeownership,
-           y = poverty,
-           group = metro)) +
-  geom_smooth(se = FALSE) +
-  geom_point()
-
-
-# Plot E:-
-
-ggplot(county,
-       aes(x = homeownership,
-           y = poverty,
-           group = metro,
-           color = metro)) +
-  geom_point() +
-  geom_smooth(aes(linetype = metro),
-              se = FALSE,
-              color = 'blue') +
-  guides(color = guide_legend(order = 2),
-         linetype = guide_legend(order = 1))
-
-
-# Plot F:-
-
-ggplot(county,
-       aes(x = homeownership,
-           y = poverty,
-           group = metro,
-           color = metro)) +
-  geom_point() +
-  geom_smooth(se = FALSE)
-
-
-#Plot G:-
-
-ggplot(county,
-       aes(x = homeownership,
-           y = poverty,
-           color = metro)) +
-  geom_point() +
-  geom_smooth(aes(group = "all"),
-              se = FALSE)
-
-
-# Plot H :-
-
-ggplot(county,
-       aes(x = homeownership,
-           y = poverty,
-           color = metro)) +
-  geom_point()
-
+# Arranging the plots into a grid layout
+grid.arrange(plot_A, plot_B, plot_C, plot_D, plot_E, plot_F, plot_G, plot_H, ncol = 2)
 
 
 
@@ -209,34 +200,36 @@ install.packages("pacman")
 pacman::p_load(tidyverse,
                scales)
 
-library(dplyr)
+
 
 # Set theme for ggplot2:-
 
 ggplot2::theme_set(ggplot2::theme_minimal(base_size = 14))
 
-# Rent <- read_csv("https://github.com/rfordatascience/tidytuesday/blob/master/data/2022/2022-07-05/rent.csv")
+# Rent = read_csv("https://github.com/rfordatascience/tidytuesday/blob/master/data/2022/2022-07-05/rent.csv")
 
 # Reading rent file:-
 
-rent <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-07-05/rent.csv')
+rent = readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-07-05/rent.csv')
 
 # Filtering the data of SanFrancisco and availalbe rooms:-
 
-sf_rent <- rent|>
+sf_rent = rent|>
   filter(city == "san francisco" & room_in_apt == 0)
+#  filtering the data where "city" is equal to "san francisco" & "room_in_apt" is equal to 0
+
 
 # Summary table which counts rentals per neighborhood
 
-n_count <- sf_rent |>
+n_count = sf_rent |> 
+# This part of code take data frame "sf_rent" and uses the pipe operator(|>) to pass it as input to the next operation.
   group_by(nhood) |>
-  summarise(count = n())
-print(n_count)
+  summarise(count = n())  # count calculates Rows in each group
 
 
 # Grouping the combination:-
 
-sf_rent1 <- sf_rent |>
+sf_rent1 = sf_rent |>
   mutate(
     nb_groups = ifelse(nhood %in% c("CCSF",
                                     "NOPA",
@@ -246,7 +239,7 @@ sf_rent1 <- sf_rent |>
   )
 # Filtering the data:-
 
-final_rent <- sf_rent1 |>
+final_rent = sf_rent1 |>
   filter(nb_groups %in% c("Others",
                           "sea cliff",
                           "nob hill",
@@ -257,20 +250,21 @@ final_rent <- sf_rent1 |>
                           "cole valley"))
 
 # Selecting years:-
-yr <- c(2003, 
+yr = c(2003, 
         2006,
         2009,
         2012,
         2015,
         2018)
 
-final_rent1 <- final_rent |>
+final_rent1 = final_rent |>
   filter(year %in% yr)
+#  %in%  operator checks if each value of "year" is present in the vector "yr".
 
 
 # Creating Labels:-
 
-new_labels <- as_labeller(c(
+new_labels = as_labeller(c(
   "mission district" = "Mission District",
   "downtown" = "Downtown",
   "nob hill" = "Nob Hill",
@@ -288,18 +282,17 @@ ggplot(final_rent1,
        aes(x = nb_groups,
            y = price/beds,
            fill = as.factor(year))) +
-  geom_boxplot(width = 0.7) +
-  facet_wrap(~nb_groups,
-             scales = "free",
-             labeller = new_labels,
-             ncol = 4) +
-  labs(x = "Neighbourhood in San Francisco",
+  geom_boxplot(width = 0.7) +         # To create BoxPlot
+  facet_wrap(~nb_groups,    # This is used to create a faceted plot, where each neighborhood is shown separately. 
+             scales = "free",  # Allowing each facet to have its own independent scale
+             labeller = new_labels, # custom labeling function
+             ncol = 4) +    # Facets are arranged in four columns.
+  labs(x = "Neighbourhood in San Francisco",    # Labeling 
        y = "Rental Price per Bedroom",
        title = "Rental Apartments in SF",
        fill = "Year") +
-  scale_x_discrete(labels = NULL) +
-  scale_y_continuous(labels = label_dollar())
-
+  scale_x_discrete(labels = NULL) +               # Removing Labels
+  scale_y_continuous(labels = label_dollar())     # Formatting the labels as dollar amounts.
 
 
 
@@ -312,47 +305,37 @@ ggplot(final_rent1,
 
 
 
-#Reading the napolean.rds file and all the data in the dataframe
-napolean = readRDS("data/napoleon.rds")
-napolean
-napolean$cities
-napolean$temperatures
-napolean$troops
+# Reading the Napoleon's data from the "napoleon.rds" file.
+napoleon = readRDS("data/napoleon.rds")
 
-# Plotting the troops data.
-# The troops data contains 5 variables about troop movement:
-# Longitude(long), Latitude(lat), Survivors, direction and group. 
-# The longitude variable will be mapped to x-axis and 
-# the latitude variable will be mapped to y-axis.
+# Displaying the loaded data objects.
+napoleon
+napoleon$cities
+napoleon$temperatures
+napoleon$troops
 
-# The mapping of color to the direction will distinguish the path between 
-# advancing troops and retreating groups.
-# We have set the minimum size for mapping the data value to 2
-# and maximum size is 13.
-
-troops = ggplot(napolean$troops,
+# Creating a plot to visualize troop movement data.
+# Mapping longitude to x-axis, latitude to y-axis, 
+# color to direction, and size to survivors.
+# Customizing the lineend style and size range.
+troops = ggplot(napoleon$troops,
                 aes(x = long,
                     y = lat)) +
-  geom_path(aes(size = survivors,
+  geom_path(aes(size = survivors,       # Line Plot
                 color = direction,
                 group = group),
-            lineend="round") +
-  scale_size(range = c(2,13)) +
-  scale_color_manual(values = c("lavender",
-                                "darkgray"))
+            lineend = "round") +
+  scale_size(range = c(2, 13)) +
+  scale_color_manual(values = c("lavender", "darkgray"))
 
-# Now, to overlay the geographic details, like position of the cites,
-# geom_point() is used to plot the city location.
-
-
-# The font-type is used for rendering text elements within the plot.
-
+# Overlaying city locations on the troop movement plot.
+# Customizing text labels for cities.
 cities = troops +
-  geom_point(data = napolean$cities,
+  geom_point(data = napoleon$cities,    # Scatter Plot
              aes(x = long,
                  y = lat),
              color = "purple") +
-  geom_text_repel(data = napolean$cities,
+  geom_text_repel(data = napoleon$cities,  # Text Labelling 
                   aes(x = long,
                       y = lat,
                       label = city),
@@ -360,66 +343,40 @@ cities = troops +
                   family = "Open Sans Condensed",
                   fontface = "bold")
 
-
-napolean$temperatures = napolean$temperatures|>
-  mutate(label = paste0(temp,
-                        "°",
-                        "/",
-                        day, 
-                        month))
-
-head(napolean$temperatures)
-
-# To plot temperature graph longitude variable is used in x-axis
-# and temperature is used in y-axis.
-
-# The route is a representation of the temperature data points over the regions
-# is where the troops have traveled.
-
-
-temp = ggplot(napolean$temperatures,
+# Creating a plot to visualize temperature data.
+# Mapping longitude to x-axis, temperature to y-axis.
+# Representing temperature data points as a line.
+temp = ggplot(napoleon$temperatures,       # Aesthetic 
               aes(x = long,
                   y = temp)) +
-  geom_path(color = "pink",
+  geom_path(color = "pink",                # Line Plot
             size = 2) +
   geom_point(size = 2) +
-  geom_text_repel(aes(label=label), size=3)
+  geom_text_repel(aes(label = paste0(temp, "°", "/", day, month)), size = 3)
 
-# "coord_cartesian()" is used to set the limits for x-axis 
-#  without filtering the data points.
-#  This function also allows to zoom in one specific region of the x-axis.
-
-# "theme_void()" is used to remove the background, grid lines and axis labels.
-
+# Adjusting x-axis limits without filtering data points.
 cities = cities +
-  coord_cartesian(xlim = c(24, 38)) +
+  coord_cartesian(xlim = c(24, 38)) +       # Zooming 
   theme_void() +
-  labs(x = NULL,
-       y = NULL) + 
+  labs(x = NULL, y = NULL) +                # Labeling 
   theme(legend.position = "none")
 
-# Similar to the previous code, the limit for x-axis is again set 
-# which is ranging from 24 to 38. 
-# This helps to focus on the specific region in the x-axis while 
-# retaining all the data points.
-
+# Adjusting x-axis limits for temperature plot.
 temp = temp +
-  coord_cartesian(xlim = c(24, 38)) +
-  labs(x = NULL, y="Temperature") + 
+  coord_cartesian(xlim = c(24, 38)) +       # Zooming
+  labs(x = NULL, y = "Temperature") +       # Labeling
   theme_bw() +
   theme(panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank(),
         panel.grid.minor.y = element_blank(),
-        axis.text.x = element_blank(), axis.ticks = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks = element_blank(),
         panel.border = element_blank())
 
-# Finally, with grid.arrange() function the cities and temp plots 
-# are arranged into a grid and row will set the row values to 2 in the grid.
-
+# Arranging the cities and temperature plots into a grid.
 grid.arrange(cities,
              temp,
-             nrow=2, 
-             heights=c(3.5, 1.2))
-
+             nrow = 2, 
+             heights = c(3.5, 1.2))
 
 ```
