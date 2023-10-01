@@ -1,9 +1,9 @@
 ---
-title: "HW 01"
+  title: "HW 01"
 author: "Harshit Mehra"
 format:
   html:
-    embed-resources: true
+  embed-resources: true
 toc: true
 ---
   
@@ -28,7 +28,7 @@ library(pacman)
 
 
 # What this Data Tells :
-  
+
 #  Plot is helping us understand the distribution of accidents throughout the day,
 #  with a focus on how this distribution changes between weekends and weekdays.
 #  It aims to show whether the severity of accidents varies with time of day and day of the week.
@@ -188,17 +188,17 @@ ggplot(nyc_marathon,              # Creating a ggplot visualization:
        subtitle = "By Division") +                            # Add plot subtitle           
   scale_color_manual(values = c("skyblue", "pink")) +          # Define custom colors
   theme_minimal()               # Use a minimal theme for a cleaner look
-  
 
-  # Insights:
-  # This line plot visualizes the NYC Marathon finish times over the years for different divisions.
-  # - The x-axis represents the years, providing a chronological view.
-  # - The y-axis represents the finish time, showing how it varies over time.
-  # - Each division is represented by a different color (skyblue and pink), making it easy to distinguish them.
-  # - The larger lines improve visibility and readability.
-  # - The plot shows the trend of finish times for different divisions, allowing us to compare their performance over the years.
-  # - Further analysis and interpretation could reveal insights into whether certain divisions are improving or if there are outliers in specific years.
-  
+
+# Insights:
+# This line plot visualizes the NYC Marathon finish times over the years for different divisions.
+# - The x-axis represents the years, providing a chronological view.
+# - The y-axis represents the finish time, showing how it varies over time.
+# - Each division is represented by a different color (skyblue and pink), making it easy to distinguish them.
+# - The larger lines improve visibility and readability.
+# - The plot shows the trend of finish times for different divisions, allowing us to compare their performance over the years.
+# - Further analysis and interpretation could reveal insights into whether certain divisions are improving or if there are outliers in specific years.
+
 
 
 #--------------
@@ -216,6 +216,39 @@ ggplot(nyc_marathon,              # Creating a ggplot visualization:
 ```
 
 ## 3 - US counties
+
+# What does the following code do? Does it work? Does it make sense? Why/why not?
+
+# 1st Code :
+# ggplot(county) +
+#  geom_point(aes(x = median_edu, y = median_hh_income)) +
+#  geom_boxplot(aes(x = smoking_ban, y = pop2017))
+
+# ggplot(county) creates a plot using the "county" data frame as the data source.
+# "gepm_point" makes a scatterplot. It plots points where the x-axis represents
+# "median_edu" and the y-axis represents "median_hh_income". 
+# The aes() function specifies the aesthetic mappings for this layer.
+# "geom_boxplot" creates boxplots where x-axis represents "smoking_ban" and y-axis represents "pop2017". 
+# Again, the aes() function specifies the aesthetic mappings for this layer too.
+
+#  The code will run without an error, but it won't produce the visual representation effectively. 
+# The reason is that it is trying to join a scatterplot and a boxplot on the same axes with different X axes.
+# The Scatter plot is okay, but boxplot is very small it's hard to understand the information it tring to display
+
+# 2nd Code :
+# ggplot(county %>% filter(!is.na(median_edu))) + 
+#   geom_point(aes(x = homeownership, y = poverty)) + 
+#   facet_grid(median_edu ~ .)
+
+# Which of the following two plots makes it easier to compare poverty levels across people from different median education levels?
+# What does this say about when to place a faceting variable across rows or columns?
+
+# In my openion, 2nd Plot is better to compare poverty levels.
+# faceting across rows makes more sense because median_edu appears to be categorical,
+# and we have to compare how home ownership and poverty relate to different education level vertically.
+
+
+
 ```{r label-me-3}
 
 
@@ -233,7 +266,7 @@ plot_A = ggplot(county, aes(x = homeownership, y = poverty)) + geom_point() # Fo
 plot_B = ggplot(county, aes(x = homeownership, y = poverty)) +
   geom_point() +              # First layer of Scatter Plot.
   geom_smooth(se = FALSE)     # Second layer of  Line Plot.
-            # SE + FAlSE to remove shaded region around the line.
+# SE + FAlSE to remove shaded region around the line.
 
 # Plot C :
 
@@ -250,7 +283,7 @@ plot_D = ggplot(county, aes(x = homeownership, y = poverty, group = metro)) +
 
 # Plot E :
 
-              # To determine the color of data points in the scatter plot.
+# To determine the color of data points in the scatter plot.
 plot_E = ggplot(county, aes(x = homeownership, y = poverty, group = metro, color = metro)) +
   geom_point() +      # Scatter Plot then Smooth Line 
   geom_smooth(aes(linetype = metro), se = FALSE, color = 'blue') +  # Remove Shaded area
@@ -268,7 +301,7 @@ plot_F = ggplot(county, aes(x = homeownership, y = poverty, group = metro, color
 plot_G = ggplot(county, aes(x = homeownership, y = poverty, color = metro)) +
   geom_point() +
   geom_smooth(aes(group = "all"), se = FALSE) 
- # "all" data points will be treated as they belong to a single group
+# "all" data points will be treated as they belong to a single group
 
 # Plot H :
 
@@ -285,6 +318,16 @@ grid.arrange(plot_A, plot_B, plot_C, plot_D, plot_E, plot_F, plot_G, plot_H, nco
 
 
 ## 4 - Rental apartments in SF
+
+
+# Code visualizes rental apartment data in San Francisco over the years, focusing on selected neighborhoods.
+# Plot shows a series of boxplots that shows the distribution of rental prices per bedroom in different neighborhoods of San Francisco.
+# Each boxplot represents a specific neighborhood, and they are grouped together in rows.
+# The x-axis displays the neighborhood names, while the y-axis represents the rental price per bedroom.
+# Each boxplot is color-coded by year, allowing to track changes over time.
+
+
+
 ```{r label-me-4}
 
 # Load necessary libraries
